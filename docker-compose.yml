@@ -14,6 +14,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       # Creates the schema on first start; `txncat db init` does the same on demand.
       - ./sql/001_schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+      - ./sql/002_external_test.sql:/docker-entrypoint-initdb.d/002_external_test.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U txncat -d txncat"]
       interval: 5s

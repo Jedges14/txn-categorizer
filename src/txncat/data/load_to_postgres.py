@@ -1,6 +1,6 @@
-"""Load synthetic rows and (if present) the private real test set into PostgreSQL.
+"""Load synthetic rows, the external test set and (if present) the private real test set into PostgreSQL.
 
-Loading is a full replace per source ('synthetic' / 'real'), so reruns don't duplicate rows.
+Loading is a full replace per source ('synthetic', 'external:…', 'real'), so reruns don't duplicate rows.
 """
 
 from __future__ import annotations
@@ -17,8 +17,8 @@ from txncat.data.taxonomy import category_names
 
 REAL_TEST_COLUMNS = ["posted_at", "description", "amount", "category"]
 INSERT = text(
-    "INSERT INTO transactions (posted_at, description, amount, category, split, source) "
-    "VALUES (:posted_at, :description, :amount, :category, :split, :source)"
+    "INSERT INTO transactions (posted_at, description, amount, direction, category, split, source) "
+    "VALUES (:posted_at, :description, :amount, :direction, :category, :split, :source)"
 )
 
 
@@ -94,7 +94,7 @@ def replace_source(engine: Engine, source: str, rows: list[dict]) -> LoadSummary
     with engine.begin() as conn:
         conn.execute(text("DELETE FROM transactions WHERE source = :s"), {"s": source})
         if rows:
-            conn.execute(INSERT, rows)
+            conn.execute(INSERT, [{"direction": None, **r} for r in rows])
         counts = conn.execute(
             text("SELECT split, count(*) FROM transactions WHERE source = :s GROUP BY split"),
             {"s": source},

@@ -22,3 +22,4 @@ runs/
 # LLM response cache (M4): reproducible from prompts, may be large
 .cache/
 data/generated/
+data/external/
