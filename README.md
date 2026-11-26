@@ -1,12 +1,13 @@
 # Transaction Categorizer: classical ML vs. LLM
-n[![CI](https://github.com/Jedges14/txn-categorizer/actions/workflows/ci.yml/badge.svg)](https://github.com/Jedges14/txn-categorizer/actions/workflows/ci.yml)
+
+[![CI](https://github.com/Jedges14/txn-categorizer/actions/workflows/ci.yml/badge.svg)](https://github.com/Jedges14/txn-categorizer/actions/workflows/ci.yml)
 
 Sorts short bank-transaction descriptions (e.g. `SQ *BLUE BOTTLE 0423 OAKLAND CA`) into small-business expense
 categories, and compares an XGBoost baseline on SQL-engineered features, a fine-tuned small transformer, and a
 few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. Plan: [SPEC.md](SPEC.md).
 
-> Status: **M0 (setup) done**; CI green on `2db2c33`. No data, models or results yet; every number will be recorded in `RESULTS.md` with the
-> command that produced it.
+> Status: **M0 (setup) done**; CI green on `2db2c33`. No data, models or results yet; every number will be
+> recorded in `RESULTS.md` with the command that produced it.
 
 ## Run locally
 
