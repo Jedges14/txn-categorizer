@@ -6,8 +6,10 @@ Sorts short bank-transaction descriptions (e.g. `SQ *BLUE BOTTLE 0423 OAKLAND CA
 categories, and compares an XGBoost baseline on SQL-engineered features, a fine-tuned small transformer, and a
 few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. Plan: [SPEC.md](SPEC.md).
 
-> Status: **M0 (setup) done**; CI green on `2db2c33`. No data, models or results yet; every number will be
-> recorded in `RESULTS.md` with the command that produced it.
+> Status: **M1 (data) done**: taxonomy, 20,000 synthetic transactions split by merchant, loaded into Postgres.
+> No models or results yet; every number is recorded in [RESULTS.md](RESULTS.md) with the command that produced it.
+
+![Class distribution](reports/figures/class_distribution.png)
 
 ## Run locally
 
@@ -17,6 +19,9 @@ Requires Python 3.11–3.13, [uv](https://docs.astral.sh/uv/) and Docker.
 docker compose up -d          # PostgreSQL 16 on localhost:5433 (schema created on first start)
 uv sync                       # create .venv with pinned dependencies
 uv run txncat db check        # confirm the database is reachable
+uv run txncat data build      # data/merchants.csv + data/generated/synthetic.csv (seed 42)
+uv run txncat data load       # into Postgres (+ data/private/real_test.csv if you've labeled it)
+uv run txncat data report     # reports/data_summary.md + reports/figures/class_distribution.png
 uv run pytest                 # tests (DB tests skip if Postgres isn't running)
 uv run pre-commit install     # run ruff + repo checks on every commit
 ```
@@ -26,10 +31,12 @@ Copy `.env.example` to `.env` only if you need to change the database URL or (fr
 ## Layout
 
 ```
-src/txncat/   cli.py (txncat), config.py, db.py; data/ features/ models/ eval/ filled in M1–M5
+src/txncat/   cli.py (txncat), config.py, db.py; data/ (M1); features/ models/ eval/ filled in M2–M5
 sql/          001_schema.sql (transactions table); features.sql arrives in M2
-data/         sample/ (fake rows, committed) · private/ (your real labeled transactions; git-ignored, never committed)
-tests/        CLI, repo-hygiene guards, schema tests against real Postgres
+data/         taxonomy.yaml, merchants.csv, sample/ (fake rows) · private/ (your real labels; git-ignored)
+              how the data was made and its limitations: data/README.md
+notebooks/    01_eda.ipynb (executed)
+tests/        CLI, data/splits (no merchant in two splits), repo hygiene, schema + loading against real Postgres
 ```
 
 ## Data privacy
