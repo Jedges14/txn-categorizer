@@ -196,7 +196,23 @@ def build_parser() -> argparse.ArgumentParser:
         func=_data_external
     )
     data_sub.add_parser("report", help="class distribution table and chart").set_defaults(func=_data_report)
+
+    train = sub.add_parser("train", help="model training")
+    train_sub = train.add_subparsers(dest="train_command", required=True)
+    train_sub.add_parser(
+        "baseline", help="E0 majority/rules, E1 logistic TF-IDF, E2 XGBoost TF-IDF+SQL; tuned on val"
+    ).set_defaults(func=_train_baseline)
     return parser
+
+
+def _train_baseline(_: argparse.Namespace) -> int:
+    from txncat.models.train_cli import run
+
+    try:
+        return run()
+    except OperationalError as exc:
+        print(f"Cannot reach PostgreSQL: {exc.orig}", file=sys.stderr)
+        return 1
 
 
 def main(argv: Sequence[str] | None = None) -> int:
