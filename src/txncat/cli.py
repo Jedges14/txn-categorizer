@@ -212,7 +212,30 @@ def build_parser() -> argparse.ArgumentParser:
     data_sub.add_parser(
         "export-encoder", help="write data/generated/encoder_input.csv for training E3 elsewhere (Colab)"
     ).set_defaults(func=_data_export_encoder)
+
+    llm = sub.add_parser("llm", help="E4/E5 with a free local open-weight LLM (no API key, no cost)")
+    llm_sub = llm.add_subparsers(dest="llm_command", required=True)
+    lr = llm_sub.add_parser("run", help="classify with the LLM; needs: uv sync --extra encoder")
+    lr.add_argument("--mode", choices=["zero", "few"], required=True, help="zero = E4, few = E5 (3 per category)")
+    lr.add_argument("--splits", nargs="+", default=["test", "external_test"])
+    lr.add_argument("--limit", type=int, default=None, help="random sample per split (pilot runs)")
+    lr.add_argument("--model", default="Qwen/Qwen2.5-1.5B-Instruct")
+    lr.add_argument("--threads", type=int, default=None)
+    lr.set_defaults(func=_llm_run)
     return parser
+
+
+def _llm_run(args: argparse.Namespace) -> int:
+    try:
+        from txncat.models.llm_cli import run
+    except ImportError as exc:
+        print(f"{exc}. Install the encoder extra: uv sync --extra encoder", file=sys.stderr)
+        return 1
+    try:
+        return run(args.mode, args.splits, args.limit, args.model, args.threads)
+    except OperationalError as exc:
+        print(f"Cannot reach PostgreSQL: {exc.orig}", file=sys.stderr)
+        return 1
 
 
 def _train_finetune(args: argparse.Namespace) -> int:
