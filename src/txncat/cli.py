@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 
 from sqlalchemy.exc import OperationalError
 
@@ -202,7 +203,33 @@ def build_parser() -> argparse.ArgumentParser:
     train_sub.add_parser(
         "baseline", help="E0 majority/rules, E1 logistic TF-IDF, E2 XGBoost TF-IDF+SQL; tuned on val"
     ).set_defaults(func=_train_baseline)
+    ft = train_sub.add_parser("finetune", help="E3 fine-tuned DistilBERT (needs: uv sync --extra encoder)")
+    ft.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
+    ft.add_argument("--epochs", type=int, default=3)
+    ft.add_argument("--input", type=Path, default=None, help="CSV from `txncat data export-encoder` (e.g. on Colab)")
+    ft.set_defaults(func=_train_finetune)
+
+    data_sub.add_parser(
+        "export-encoder", help="write data/generated/encoder_input.csv for training E3 elsewhere (Colab)"
+    ).set_defaults(func=_data_export_encoder)
     return parser
+
+
+def _train_finetune(args: argparse.Namespace) -> int:
+    try:
+        from txncat.models.finetune_cli import run
+    except ImportError as exc:
+        print(f"{exc}. Install the encoder extra: uv sync --extra encoder", file=sys.stderr)
+        return 1
+    return run(args.seeds, args.input, args.epochs)
+
+
+def _data_export_encoder(_: argparse.Namespace) -> int:
+    from txncat.models.finetune_cli import export_encoder_input
+
+    path = export_encoder_input()
+    print(f"wrote {path.relative_to(REPO_ROOT)}")
+    return 0
 
 
 def _train_baseline(_: argparse.Namespace) -> int:
