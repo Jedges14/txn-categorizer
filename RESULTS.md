@@ -94,3 +94,41 @@ re-tuning) · Command: `uv run python scripts/diagnose_e2_external.py` · Raw:
 - Takeaway: amount and date features help (+0.045 macro-F1) when present, but a model must be trained to cope when
   they're absent. Planned fix, chosen on principle and to be validated on **val with amounts masked**, never on the
   external set: train with randomly masked amount/date features (missingness augmentation).
+
+## M3: Fine-tuned encoder (E3)
+
+Date: 2026-11-26 · Code: commit `7475d2d` (run recorded as `ffb46f9+uncommitted`: this code before commit) ·
+Command: `uv sync --extra encoder && uv run txncat train finetune --seeds 0 1 2 --epochs 3` · Hardware: the laptop
+CPU above (14 torch threads, no GPU), about 14 min per seed · Raw: [`reports/metrics/e3_finetune.json`](reports/metrics/e3_finetune.json),
+predictions `predictions/E3_finetune_seed{0,1,2}.csv` · Model card: [`docs/model_card_e3.md`](docs/model_card_e3.md).
+
+DistilBERT (uncased, revision `12040acc`), text only (`desc_clean`), class-weighted loss, lr 5e-5, batch 32,
+3 epochs; best epoch per seed chosen on **val** (epochs 3, 2, 3). No other tuning.
+
+| Seed | val macro-F1 | test macro-F1 | external macro-F1 | external, unseen merchants |
+|---|---|---|---|---|
+| 0 | 0.879 | 0.858 | 0.608 | 0.532 |
+| 1 | 0.883 | 0.831 | 0.619 | 0.556 |
+| 2 | 0.881 | 0.860 | 0.611 | 0.539 |
+| **mean ± std** | 0.881 ± 0.002 | **0.850 ± 0.016** | **0.613 ± 0.005** | **0.542 ± 0.013** |
+
+Accuracy, mean ± std: test 0.871 ± 0.021, external 0.585 ± 0.011.
+
+**All models so far** (macro-F1; E3 is the 3-seed mean):
+
+| Model | test | external | external, unseen merchants |
+|---|---|---|---|
+| E0 keyword rules | 0.666 | 0.525 | 0.510 |
+| E1 logistic regression, TF-IDF | 0.839 | 0.576 | 0.469 |
+| E2 XGBoost, TF-IDF + SQL features | **0.875** | 0.364 | 0.329 |
+| E3 fine-tuned DistilBERT | 0.850 ± 0.016 | **0.613 ± 0.005** | **0.542 ± 0.013** |
+
+**Reading it**
+- On the synthetic test split, E2 is still highest; E3 sits between E1 and E2, and its seed-to-seed spread (0.831–0.860)
+  is as large as some model-to-model gaps. Whether these differences are significant is M5's job (McNemar's test,
+  bootstrap CIs), so no ranking claim is made here.
+- On the independent external set, E3 is best of all models and most stable across seeds (std 0.005), with the
+  largest margin on merchants never seen in training (0.542 vs E1 0.469). Being text-only, it avoids E2's
+  missing-feature failure.
+- Every model loses a lot moving from synthetic test to external data (E3: 0.85 → 0.61). That gap, not the synthetic
+  scores, is the main limitation to report.

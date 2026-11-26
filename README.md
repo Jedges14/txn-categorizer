@@ -6,20 +6,22 @@ Sorts short bank-transaction descriptions (e.g. `SQ *BLUE BOTTLE 0423 OAKLAND CA
 categories, and compares an XGBoost baseline on SQL-engineered features, a fine-tuned small transformer, and a
 few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. Plan: [SPEC.md](SPEC.md).
 
-> Status: **M2 (SQL features + baselines) done.** Data: 20,000 synthetic transactions split by merchant, plus a
+> Status: **M3 (fine-tuned encoder) done.** Data: 20,000 synthetic transactions split by merchant, plus a
 > 2,100-row external test set from an independent dataset (no real-transaction test set exists; see
 > [data/README.md](data/README.md)). Every number is in [RESULTS.md](RESULTS.md) with the command that produced it.
 
-**Baselines so far** (macro-F1; test = unseen synthetic merchants, external = independent dataset):
+**Results so far** (macro-F1; test = unseen synthetic merchants, external = independent dataset; E3 = mean ± std of 3 seeds):
 
 | Model | test | external |
 |---|---|---|
 | E0 keyword rules | 0.666 | 0.525 |
-| E1 logistic regression, TF-IDF | 0.839 | **0.576** |
+| E1 logistic regression, TF-IDF | 0.839 | 0.576 |
 | E2 XGBoost, TF-IDF + SQL features | **0.875** | 0.364 |
+| E3 fine-tuned DistilBERT | 0.850 ± 0.016 | **0.613 ± 0.005** |
 
 XGBoost wins on synthetic test data but collapses on the external set, because it never saw rows without an amount
-or date during training. Diagnosed in RESULTS.md.
+or date during training (diagnosed in RESULTS.md). The fine-tuned encoder generalizes best to the independent data.
+Significance tests come in M5.
 
 ![Class distribution](reports/figures/class_distribution.png)
 
@@ -36,6 +38,7 @@ uv run txncat data external   # download the pinned external test dataset (MIT, 
 uv run txncat data load       # into Postgres (synthetic + external test; + private real test if present)
 uv run txncat data report     # reports/data_summary.md + reports/figures/class_distribution.png
 uv run txncat train baseline  # E0-E2 (about 11 min); predictions/ + reports/metrics/baseline.json
+uv sync --extra encoder; uv run txncat train finetune   # E3, 3 seeds (about 42 min on CPU)
 uv run pytest                 # tests (DB tests skip if Postgres isn't running)
 uv run pre-commit install     # run ruff + repo checks on every commit
 ```
