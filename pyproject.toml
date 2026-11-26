@@ -18,8 +18,23 @@ dependencies = [
     "xgboost==3.4.1",
 ]
 
+[project.optional-dependencies]
+# E3 fine-tuned encoder (M3). Installed from PyTorch's CPU index locally/CI; Colab uses its own GPU torch.
+encoder = [
+    "torch==2.15.0",
+    "transformers==5.24.1",
+]
+
 [project.scripts]
 txncat = "txncat.cli:main"
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
 
 [dependency-groups]
 dev = [
