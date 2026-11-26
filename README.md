@@ -6,10 +6,20 @@ Sorts short bank-transaction descriptions (e.g. `SQ *BLUE BOTTLE 0423 OAKLAND CA
 categories, and compares an XGBoost baseline on SQL-engineered features, a fine-tuned small transformer, and a
 few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. Plan: [SPEC.md](SPEC.md).
 
-> Status: **M1 (data) done**: taxonomy, 20,000 synthetic transactions split by merchant, plus a 2,100-row external
-> test set from an independent dataset, all in Postgres. There is no real-transaction test set; see
-> [data/README.md](data/README.md).
-> No models or results yet; every number is recorded in [RESULTS.md](RESULTS.md) with the command that produced it.
+> Status: **M2 (SQL features + baselines) done.** Data: 20,000 synthetic transactions split by merchant, plus a
+> 2,100-row external test set from an independent dataset (no real-transaction test set exists; see
+> [data/README.md](data/README.md)). Every number is in [RESULTS.md](RESULTS.md) with the command that produced it.
+
+**Baselines so far** (macro-F1; test = unseen synthetic merchants, external = independent dataset):
+
+| Model | test | external |
+|---|---|---|
+| E0 keyword rules | 0.666 | 0.525 |
+| E1 logistic regression, TF-IDF | 0.839 | **0.576** |
+| E2 XGBoost, TF-IDF + SQL features | **0.875** | 0.364 |
+
+XGBoost wins on synthetic test data but collapses on the external set, because it never saw rows without an amount
+or date during training. Diagnosed in RESULTS.md.
 
 ![Class distribution](reports/figures/class_distribution.png)
 
@@ -25,6 +35,7 @@ uv run txncat data build      # data/merchants.csv + data/generated/synthetic.cs
 uv run txncat data external   # download the pinned external test dataset (MIT, checksum-verified)
 uv run txncat data load       # into Postgres (synthetic + external test; + private real test if present)
 uv run txncat data report     # reports/data_summary.md + reports/figures/class_distribution.png
+uv run txncat train baseline  # E0-E2 (about 11 min); predictions/ + reports/metrics/baseline.json
 uv run pytest                 # tests (DB tests skip if Postgres isn't running)
 uv run pre-commit install     # run ruff + repo checks on every commit
 ```
