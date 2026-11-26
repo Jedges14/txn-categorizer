@@ -87,6 +87,14 @@ def test_feature_view_semantics(engine: Engine) -> None:
                 "(NULL, 'Zelle payment from someone', NULL, 'credit', 'Income / Deposits', 'external_test', 'test-sem')"
             )
         )
+        # Amount buckets need train rows to compute cut points; add some so this works on an empty database (CI).
+        conn.execute(
+            text(
+                "INSERT INTO transactions (posted_at, description, amount, category, split, source) "
+                "SELECT '2025-01-01', 'TRAIN ROW', -g::numeric, 'Other', 'train', 'test-sem-train' "
+                "FROM generate_series(1, 50) AS g"
+            )
+        )
         rows = conn.execute(
             text(
                 "SELECT description, is_outflow, is_refund, has_processor_prefix, day_of_week, is_weekend, "
