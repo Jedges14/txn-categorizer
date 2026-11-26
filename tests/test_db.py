@@ -51,6 +51,7 @@ def test_schema_is_idempotent(engine: Engine) -> None:
             "category",
             "split",
             "source",
+            "direction",
         ]
 
 
@@ -112,4 +113,23 @@ def test_split_check_constraint_rejects_unknown_split(engine: Engine) -> None:
     with engine.connect() as conn, conn.begin() as tx:
         with pytest.raises(IntegrityError):
             _insert(conn, "holdout")
+        tx.rollback()
+
+
+def test_external_rows_may_lack_amount_and_date_but_others_may_not(engine: Engine) -> None:
+    apply_schema(engine)
+    insert = text(
+        "INSERT INTO transactions (posted_at, description, amount, direction, category, split, source) "
+        "VALUES (NULL, 'GREYSTAR RENT PAYMENT', NULL, :direction, 'Rent & Lease', :split, 'test')"
+    )
+    with engine.connect() as conn, conn.begin() as tx:
+        conn.execute(insert, {"direction": "debit", "split": "external_test"})  # allowed
+        tx.rollback()
+    with engine.connect() as conn, conn.begin() as tx:
+        with pytest.raises(IntegrityError):  # train rows still need a date and an amount
+            conn.execute(insert, {"direction": "debit", "split": "train"})
+        tx.rollback()
+    with engine.connect() as conn, conn.begin() as tx:
+        with pytest.raises(IntegrityError):  # direction is constrained
+            conn.execute(insert, {"direction": "sideways", "split": "external_test"})
         tx.rollback()
