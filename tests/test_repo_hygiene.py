@@ -7,9 +7,7 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def _ignored(path: str) -> bool:
-    return (
-        subprocess.run(["git", "check-ignore", "-q", path], cwd=REPO, check=False).returncode == 0
-    )
+    return subprocess.run(["git", "check-ignore", "-q", path], cwd=REPO, check=False).returncode == 0
 
 
 def test_private_data_and_env_files_are_git_ignored() -> None:
