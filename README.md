@@ -15,7 +15,7 @@ few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. 
 
 ## Run locally
 
-Requires Python 3.11–3.13, [uv](https://docs.astral.sh/uv/) and Docker.
+Requires Python 3.12–3.13, [uv](https://docs.astral.sh/uv/) and Docker.
 
 ```bash
 docker compose up -d          # PostgreSQL 16 on localhost:5433 (schema created on first start)
