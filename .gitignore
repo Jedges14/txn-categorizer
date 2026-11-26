@@ -21,3 +21,4 @@ runs/
 .ipynb_checkpoints/
 # LLM response cache (M4): reproducible from prompts, may be large
 .cache/
+data/generated/

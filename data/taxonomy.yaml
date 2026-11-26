@@ -1,0 +1,43 @@
+# Small-business expense taxonomy (SPEC §3a). Fixed before any labeling; do not edit once labels exist.
+# Loosely modeled on common bookkeeping categories. Each entry: a one-line definition and 3 example merchants.
+version: 1
+categories:
+  - name: Meals & Entertainment
+    definition: Food, drinks and entertainment bought for business (restaurants, cafes, bars, catering, event tickets).
+    examples: [Starbucks, Chipotle, DoorDash]
+  - name: Travel
+    definition: Getting to and staying at business destinations (airfare, hotels, rideshare, rail, car rental, parking at travel).
+    examples: [Delta Air Lines, Marriott, Uber]
+  - name: Fuel & Auto
+    definition: Running business vehicles (gas, charging, repairs, maintenance, car wash, tolls, auto parts).
+    examples: [Shell, Jiffy Lube, AutoZone]
+  - name: Office Supplies
+    definition: Physical supplies and equipment for the office (paper, ink, furniture, small electronics, hardware).
+    examples: [Staples, Office Depot, Best Buy]
+  - name: Software & Subscriptions
+    definition: Recurring software, SaaS, cloud and online services (productivity tools, hosting, design tools).
+    examples: [Adobe, Google Workspace, Amazon Web Services]
+  - name: Utilities
+    definition: Business premises and connectivity utilities (electricity, gas, water, internet, phone service).
+    examples: [Comcast, PG&E, Verizon Wireless]
+  - name: Rent & Lease
+    definition: Rent or lease payments for office, retail or storage space and coworking memberships.
+    examples: [WeWork, Regus, Public Storage]
+  - name: Advertising & Marketing
+    definition: Promoting the business (online ads, printing, promotional items, marketing services).
+    examples: [Facebook Ads, Google Ads, Vistaprint]
+  - name: Professional Services
+    definition: Outside professionals and contractors (legal, accounting, consulting, freelancers, payroll services).
+    examples: [LegalZoom, Gusto, Upwork]
+  - name: Shipping & Postage
+    definition: Sending goods and documents (postage, couriers, shipping labels, packing supplies at shippers).
+    examples: [USPS, UPS, FedEx]
+  - name: Bank Fees & Charges
+    definition: Fees charged by banks and card processors (service, overdraft, wire, ATM, foreign transaction fees).
+    examples: [Monthly Service Fee, Overdraft Fee, Wire Transfer Fee]
+  - name: Income / Deposits
+    definition: Money coming in (customer payments, payout deposits from Stripe/Square/PayPal, mobile and cash deposits).
+    examples: [Stripe Transfer, Square Deposit, Mobile Deposit]
+  - name: Other
+    definition: Anything that fits none of the above (personal purchases, transfers between own accounts, unclear items).
+    examples: [Online Transfer, Venmo, Walgreens]
