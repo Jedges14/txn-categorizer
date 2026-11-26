@@ -132,3 +132,42 @@ Accuracy, mean ± std: test 0.871 ± 0.021, external 0.585 ± 0.011.
   missing-feature failure.
 - Every model loses a lot moving from synthetic test to external data (E3: 0.85 → 0.61). That gap, not the synthetic
   scores, is the main limitation to report.
+
+## M4: LLM zero-shot (E4) and few-shot (E5), free local model
+
+Date: 2026-11-26 · Code: commit `9528a02` (the runs recorded HEAD `1f10ec0`, a docs-only commit on top; `src/` and
+`prompts/` are identical) · Commands: `uv run --no-sync txncat llm run --mode zero` and `--mode few` · Raw:
+[`reports/metrics/E4_llm_zero_shot.json`](reports/metrics/E4_llm_zero_shot.json),
+[`reports/metrics/E5_llm_few_shot.json`](reports/metrics/E5_llm_few_shot.json), predictions in `predictions/E4_*`, `E5_*`.
+
+**Model:** [Qwen2.5-1.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) (Apache-2.0, revision
+`989aa798`), run locally, greedy decoding, max 16 new tokens. **No paid API: cost $0.** Hardware: NVIDIA GeForce RTX
+4060 Laptop GPU (8 GB), bf16, CUDA build of torch 2.15.0 installed locally (CI stays CPU-only). Prompt: instructions
++ 13 category definitions ([`prompts/system.md`](prompts/system.md)); each transaction is one user turn with its
+description, amount (or "unknown") and direction. E5 adds 3 examples per category (39) from **train only**, seed 42.
+The prompt and parser were written before any test/external results and not changed afterwards.
+
+| Model | test macro-F1 | test accuracy | external macro-F1 | external accuracy | external, unseen merchants | invalid replies (test / external) |
+|---|---|---|---|---|---|---|
+| E4 zero-shot | 0.608 | 0.679 | 0.644 | 0.644 | 0.624 | 39 / 26 |
+| E5 few-shot (k=3/class) | 0.670 | 0.720 | **0.667** | 0.642 | **0.640** | 16 / 136 |
+
+Invalid replies (not one of the 13 categories) are counted and scored as wrong, never dropped.
+
+**Latency and cost** (per prediction, GPU, measured when first generated): E4 p50 193 ms / p95 289 ms; E5 p50 190 ms /
+p95 291 ms. Cost per 1,000 predictions: **$0** (local open-weight model). For reference, the earlier CPU pilot ran at
+~1,020 ms per prediction (not used for results). 22 rows per run were answered from the response cache because their
+prompt was identical to an earlier row (duplicate description + amount); they keep that row's answer and latency.
+
+**Reading it**
+- On the synthetic test split the LLMs trail the trained models (E2 0.875, E3 0.850). They were never trained on this
+  generator's data, so they can't exploit its quirks.
+- **On the independent external set the LLMs are the best models:** E5 0.667 and E4 0.644 vs E3 0.613, E1 0.576, E2
+  0.364, and the margin is largest on unseen merchants (E5 0.640 vs E3 0.542). This fits the M1 warning that the
+  synthetic set is easier than other data: models fit to it generalize less well than a general-purpose model.
+- **Invalid replies:** few-shot cut them on test (39 → 16) but raised them on external (26 → 136). Of the 136, 86 are
+  "Unknown" and 48 are "Transfer"/"Transfer Between Own Accounts" (true labels mostly Utilities and Other). Likely cause:
+  every few-shot example comes from train and so has a real amount, while external rows say "Amount: unknown", which
+  the model echoes; and "Transfer" is a natural name the examples didn't rule out. Not fixed, because choosing a fix from
+  external results would be tuning on test data; it's an error-analysis item for M6.
+- Significance of these differences is tested in M5.

@@ -6,7 +6,7 @@ Sorts short bank-transaction descriptions (e.g. `SQ *BLUE BOTTLE 0423 OAKLAND CA
 categories, and compares an XGBoost baseline on SQL-engineered features, a fine-tuned small transformer, and a
 few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. Plan: [SPEC.md](SPEC.md).
 
-> Status: **M3 (fine-tuned encoder) done.** Data: 20,000 synthetic transactions split by merchant, plus a
+> Status: **M4 (LLM evaluation) done.** Data: 20,000 synthetic transactions split by merchant, plus a
 > 2,100-row external test set from an independent dataset (no real-transaction test set exists; see
 > [data/README.md](data/README.md)). Every number is in [RESULTS.md](RESULTS.md) with the command that produced it.
 
@@ -17,11 +17,13 @@ few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. 
 | E0 keyword rules | 0.666 | 0.525 |
 | E1 logistic regression, TF-IDF | 0.839 | 0.576 |
 | E2 XGBoost, TF-IDF + SQL features | **0.875** | 0.364 |
-| E3 fine-tuned DistilBERT | 0.850 ± 0.016 | **0.613 ± 0.005** |
+| E3 fine-tuned DistilBERT | 0.850 ± 0.016 | 0.613 ± 0.005 |
+| E4 LLM zero-shot (Qwen2.5-1.5B, local, $0) | 0.608 | 0.644 |
+| E5 LLM few-shot, 3 examples/category | 0.670 | **0.667** |
 
-XGBoost wins on synthetic test data but collapses on the external set, because it never saw rows without an amount
-or date during training (diagnosed in RESULTS.md). The fine-tuned encoder generalizes best to the independent data.
-Significance tests come in M5.
+The trained models win on synthetic test data; the free local LLM, never trained on that data, generalizes best to the
+independent set. XGBoost collapses there because it never saw rows without an amount or date during training
+(diagnosed in RESULTS.md). Significance tests come in M5.
 
 ![Class distribution](reports/figures/class_distribution.png)
 
@@ -39,11 +41,23 @@ uv run txncat data load       # into Postgres (synthetic + external test; + priv
 uv run txncat data report     # reports/data_summary.md + reports/figures/class_distribution.png
 uv run txncat train baseline  # E0-E2 (about 11 min); predictions/ + reports/metrics/baseline.json
 uv sync --extra encoder; uv run txncat train finetune   # E3, 3 seeds (about 42 min on CPU)
+uv run --no-sync txncat llm run --mode zero   # E4, free local LLM (needs the encoder extra)
+uv run --no-sync txncat llm run --mode few    # E5
 uv run pytest                 # tests (DB tests skip if Postgres isn't running)
 uv run pre-commit install     # run ruff + repo checks on every commit
 ```
 
-Copy `.env.example` to `.env` only if you need to change the database URL or (from M4) add an LLM key.
+No API keys are needed: the LLM is an open-weight model that runs locally.
+
+**Optional NVIDIA GPU** (about 5× faster for E4/E5): the locked environment installs CPU-only torch. To use a GPU on
+your machine, swap in the CUDA build into the project's venv (driver must support CUDA 13.2):
+
+```bash
+uv pip install --python .venv/Scripts/python.exe --reinstall --no-deps "torch==2.15.0+cu132" --index-url https://download.pytorch.org/whl/cu132
+```
+
+Then run commands with `uv run --no-sync …` (a plain `uv run` re-syncs back to the CPU build). Always pass `--python`
+so the install can't land in another Python on your machine.
 
 ## Layout
 
