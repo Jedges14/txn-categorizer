@@ -6,7 +6,9 @@ Sorts short bank-transaction descriptions (e.g. `SQ *BLUE BOTTLE 0423 OAKLAND CA
 categories, and compares an XGBoost baseline on SQL-engineered features, a fine-tuned small transformer, and a
 few-shot LLM on accuracy, macro-F1, statistical significance, cost and latency. Plan: [SPEC.md](SPEC.md).
 
-> Status: **M1 (data) done**: taxonomy, 20,000 synthetic transactions split by merchant, loaded into Postgres.
+> Status: **M1 (data) done**: taxonomy, 20,000 synthetic transactions split by merchant, plus a 2,100-row external
+> test set from an independent dataset, all in Postgres. There is no real-transaction test set; see
+> [data/README.md](data/README.md).
 > No models or results yet; every number is recorded in [RESULTS.md](RESULTS.md) with the command that produced it.
 
 ![Class distribution](reports/figures/class_distribution.png)
@@ -20,7 +22,8 @@ docker compose up -d          # PostgreSQL 16 on localhost:5433 (schema created 
 uv sync                       # create .venv with pinned dependencies
 uv run txncat db check        # confirm the database is reachable
 uv run txncat data build      # data/merchants.csv + data/generated/synthetic.csv (seed 42)
-uv run txncat data load       # into Postgres (+ data/private/real_test.csv if you've labeled it)
+uv run txncat data external   # download the pinned external test dataset (MIT, checksum-verified)
+uv run txncat data load       # into Postgres (synthetic + external test; + private real test if present)
 uv run txncat data report     # reports/data_summary.md + reports/figures/class_distribution.png
 uv run pytest                 # tests (DB tests skip if Postgres isn't running)
 uv run pre-commit install     # run ruff + repo checks on every commit

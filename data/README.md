@@ -5,8 +5,9 @@
 | `taxonomy.yaml` | The 13 categories, each with a definition and 3 example merchants. Fixed before labeling. | yes |
 | `merchants.csv` | 4,997 merchants (curated real chains + generated local businesses), each with its category. | yes |
 | `generated/synthetic.csv` | 20,000 synthetic transactions with their split and merchant. Rebuild with `txncat data build`. | no (generated) |
-| `sample/real_test_example.csv` | 20 **fake** rows showing the exact format of the private real test set. | yes |
-| `private/real_test.csv` | Your hand-labeled real transactions. | **never** (git-ignored, guarded by a pre-commit hook and a test) |
+| `external/transactions-synthetic.csv` | Independent dataset used as the **external test set** (§6). Download with `txncat data external` (pinned revision, SHA-256 checked). | no (downloaded) |
+| `sample/real_test_example.csv` | 20 **fake** rows showing the format for an optional private real test set. | yes |
+| `private/real_test.csv` | Optional hand-labeled real transactions (none exist yet). | **never** (git-ignored, guarded by a pre-commit hook and a test) |
 
 ## 1. Existing datasets: searched, not used for training
 
@@ -15,9 +16,14 @@ that allows redistribution, ≥5k rows and ≥8 categories (SPEC §3b).
 
 | Dataset | License | Verdict |
 |---|---|---|
-| [DoDataThings/us-bank-transaction-categories-v2](https://huggingface.co/datasets/DoDataThings/us-bank-transaction-categories-v2) | MIT | Best candidate: 68k rows, realistic US bank strings. **But** it is itself synthetic, has **no amount or date** (SPEC's SQL features need both), and its 17 *personal-finance* labels (Groceries, Mortgage, Personal Care…) have no counterpart for 4 of our 12 business categories (Office Supplies, Advertising & Marketing, Professional Services, Shipping & Postage). Not used for training. Could serve later as an extra out-of-distribution check on the categories that map cleanly. |
+| [DoDataThings/us-bank-transaction-categories-v2](https://huggingface.co/datasets/DoDataThings/us-bank-transaction-categories-v2) | MIT | Best candidate: 68k rows, realistic US bank strings. **But** it is itself synthetic, has **no amount or date** (SPEC's SQL features need both), and its 17 *personal-finance* labels (Groceries, Mortgage, Personal Care…) have no counterpart for 4 of our 12 business categories (Office Supplies, Advertising & Marketing, Professional Services, Shipping & Postage). Not used for training. **Used as the external test set** (§6). |
 | [mitulshah/transaction-categorization](https://huggingface.co/datasets/mitulshah/transaction-categorization) | MIT (card) | Gated; card is vague about which rows are real; descriptions are clean phrases ("Uber Ride"), not bank strings; 5 countries/currencies. Not used. |
 | Kaggle results (e.g. "Financial Transaction Description Dataset", "Bank Transaction Data") | MIT / CC0 | Indian narrations, fraud labels, or unlabeled. None fit. |
+| Kaggle "Personal Finance" ([bukolafatunde](https://www.kaggle.com/datasets/bukolafatunde/personal-finance), re-uploaded by entrepreneurlife) | **none stated** | The only candidate described as real: ~806 personal transactions (2018–19) with amounts and dates. But it comes from a course ("Thanks to DAVIDSON"), its realness can't be verified, it has **no license** (so it can't be redistributed), descriptions are app-cleaned ("Amazon"), not bank strings, and categories are personal. Not used. |
+
+**Conclusion:** no public, permissively licensed dataset of *real*, labeled business transactions was found; privacy
+makes them rare. So there is currently **no real test set**. Results will say so plainly instead of calling any
+synthetic data "real".
 
 ## 2. Synthetic training data (`txncat data build`)
 
@@ -53,12 +59,15 @@ two splits and that every split contains every category. Counts per category and
 Measured in [`notebooks/01_eda.ipynb`](../notebooks/01_eda.ipynb): in several categories, more than half the
 descriptions literally contain a category cue word: Bank Fees `FEE` 64%, Professional Services
 `CPA|LAW|LLP|CONSULT|…` 66%, Travel `HOTEL|INN|AIR|…` 63%, Shipping `SHIP|POST|MAIL|…` 61%. Real statements contain
-such words too, but probably less often. **This is why every headline number must also be reported on the real test
-set**, and why a large LLM win on synthetic data will be checked against this before being believed.
+such words too, but probably less often. **This is why every headline number must also be reported on the external
+test set (§6)**, and why a large LLM win on synthetic data will be checked against this before being believed.
 
-## 5. The private real test set (you label this)
+## 5. Optional: a private real test set
 
-1. Export 300–500 of your own (or consenting friends') card/bank transactions as CSV.
+Not available today. If real labeled transactions ever become available (yours or consenting friends'), this is
+the format and the code already validates and loads it as split `real_test`:
+
+1. Export 300–500 card/bank transactions as CSV.
 2. **Remove** account numbers, card numbers, names of people and anything else identifying. Keep the merchant text.
 3. Save as `data/private/real_test.csv` with exactly these columns (see `sample/real_test_example.csv`):
 
@@ -76,3 +85,37 @@ set**, and why a large LLM win on synthetic data will be checked against this be
 Label from the description and amount alone, as the models will see them; when unsure, decide by the taxonomy
 definitions, not by what the purchase "really" was. Rows stay on your machine: the folder is git-ignored, a
 pre-commit hook blocks committing it, and nothing in this repo sends it anywhere.
+
+## 6. External test set (`txncat data external`, then `txncat data load`)
+
+Since no real test set exists, generalization is checked on an **independent dataset made by someone else**:
+[DoDataThings/us-bank-transaction-categories-v2](https://huggingface.co/datasets/DoDataThings/us-bank-transaction-categories-v2)
+(MIT), pinned to revision `3e8d052c` and verified by SHA-256 (`src/txncat/data/external.py`).
+
+- **It is synthetic too**, not real. Its value is that it comes from a *different generator* with different habits:
+  mixed case, untruncated strings, ACH fields (`ORIG CO NAME:… SEC:PPD`), payroll and Zelle deposits. A model that
+  only learned this repo's generator will show it here.
+- **Category mapping**, only where the match is unambiguous (7 of our 13 categories are covered):
+
+  | Theirs | → Ours |
+  |---|---|
+  | Restaurants | Meals & Entertainment |
+  | Travel | Travel |
+  | Utilities | Utilities |
+  | Rent | Rent & Lease |
+  | Fees | Bank Fees & Charges |
+  | Income | Income / Deposits |
+  | Transfer, Groceries, Healthcare, Personal Care | Other |
+
+  **Excluded:** Subscription (mixes business SaaS like ClickUp with consumer apps like Instagram/Peloton), Shopping
+  (Office Supplies or Other?), Transportation (Fuel & Auto or Travel?), Entertainment (Meals or streaming/Other?),
+  Insurance, Mortgage, Education (no counterpart).
+- **Sample:** a fixed, seeded 300 rows per mapped category (2,100 rows; `Other` takes 75 from each of its 4 sources),
+  after removing exact duplicate strings. Stored as split `external_test`.
+- **No amounts or dates** exist in that dataset; they are left NULL, never invented. Its `[debit]`/`[credit]` marker is
+  kept in the `direction` column. Amount and date features will be missing for these rows, so the external score
+  mainly measures the text side of each model.
+- **Overlap with training merchants:** 414 of 2,100 rows (19.7%) mention a merchant name from the train split
+  (e.g. AIRBNB, COMCAST, MONTHLY SERVICE FEE; none for Rent). Some are deliberately hard: payroll deposits from
+  employers like DOORDASH or ADOBE are Income here, while those names are Meals/Software in training. Results will be
+  reported on the full external set **and** on the unseen-merchant subset. Recomputed by `txncat data report`.
