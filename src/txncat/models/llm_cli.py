@@ -71,6 +71,8 @@ def run(mode: str, splits: list[str], limit: int | None, model_id: str, threads:
         "model": client.model_id,
         "revision": client.revision,
         "license": "apache-2.0",
+        "device": client.device,
+        "gpu": _gpu_name(client.device),
         "decoding": client.settings,
         "prompt_sha256": r.prompt_sha256,
         "few_shot_example_ids": r.example_ids,
@@ -80,7 +82,7 @@ def run(mode: str, splits: list[str], limit: int | None, model_id: str, threads:
             "p50": float(np.percentile(lat, 50)),
             "p95": float(np.percentile(lat, 95)),
             "mean": float(lat.mean()),
-            "note": "per prediction on the laptop CPU, measured when first generated (cache hits keep it)",
+            "note": "per prediction on the recorded device, measured when first generated (cache hits keep it)",
         },
         "cost_usd_per_1000": 0.0,
         "cpu_seconds_per_1000": float(lat.mean()),  # mean ms per prediction == CPU-seconds per 1000 predictions
@@ -97,3 +99,11 @@ def run(mode: str, splits: list[str], limit: int | None, model_id: str, threads:
     print(f"latency p50 {statistics.median(lat):.0f} ms, p95 {np.percentile(lat, 95):.0f} ms; cost $0 (local model)")
     print(f"saved predictions/{name}.csv and {out.relative_to(REPO_ROOT)}")
     return 0
+
+
+def _gpu_name(device: str) -> str | None:
+    if device != "cuda":
+        return None
+    import torch
+
+    return str(torch.cuda.get_device_name(0))

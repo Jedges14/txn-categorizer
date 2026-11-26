@@ -6,7 +6,7 @@ Every number here came from a command run in this repo, with the date and git co
 
 ## M1: Data
 
-Date: 2026-11-26 · Commit `9a8dd30` (CI green) · Commands:
+Date: 2026-11-26 · Commit `7501122` (CI green) · Commands:
 
 ```bash
 uv run txncat data build    # seed 42
@@ -32,7 +32,7 @@ uv run txncat data report
 
 ## M1: External test set
 
-Date: 2026-11-26 · Commit `322d05e` · Commands:
+Date: 2026-11-26 · Commit `9056c3b` · Commands:
 
 ```bash
 uv run txncat data external   # DoDataThings/us-bank-transaction-categories-v2 @ 3e8d052c, SHA-256 0424aed6…
@@ -49,7 +49,7 @@ uv run txncat data report
 
 ## M2: SQL features and baselines (E0–E2)
 
-Date: 2026-11-26 · Code: commit `9dda842` (the run was recorded as `7a0ea85+uncommitted`, i.e. this exact code before
+Date: 2026-11-26 · Code: commit `7f1b315` (the run was recorded as `46d8cf3+uncommitted`, i.e. this exact code before
 it was committed) · Command: `uv run txncat train baseline` (641 s on the laptop above) · Raw:
 [`reports/metrics/baseline.json`](reports/metrics/baseline.json), predictions in [`predictions/`](predictions/).
 
@@ -97,7 +97,7 @@ re-tuning) · Command: `uv run python scripts/diagnose_e2_external.py` · Raw:
 
 ## M3: Fine-tuned encoder (E3)
 
-Date: 2026-11-26 · Code: commit `7475d2d` (run recorded as `ffb46f9+uncommitted`: this code before commit) ·
+Date: 2026-11-26 · Code: commit `95b7df3` (run recorded as `678913d+uncommitted`: this code before commit) ·
 Command: `uv sync --extra encoder && uv run txncat train finetune --seeds 0 1 2 --epochs 3` · Hardware: the laptop
 CPU above (14 torch threads, no GPU), about 14 min per seed · Raw: [`reports/metrics/e3_finetune.json`](reports/metrics/e3_finetune.json),
 predictions `predictions/E3_finetune_seed{0,1,2}.csv` · Model card: [`docs/model_card_e3.md`](docs/model_card_e3.md).

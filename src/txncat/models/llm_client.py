@@ -87,6 +87,7 @@ class LocalHFClient:
         max_new_tokens: int = 16,
         cache: ResponseCache | None = None,
         threads: int | None = None,
+        device: str | None = None,
     ) -> None:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -97,8 +98,13 @@ class LocalHFClient:
         self.revision = revision if revision is not None else MODEL_REVISIONS.get(model_id)
         self.max_new_tokens = max_new_tokens
         self.cache = cache
+        # GPU (bf16) when a CUDA build of torch and a GPU are present; otherwise CPU (fp32). Device and dtype are part
+        # of the cache key, so answers from different hardware/precision are never mixed.
+        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.dtype = torch.bfloat16 if self.device == "cuda" else torch.float32
         self.tok = AutoTokenizer.from_pretrained(model_id, revision=self.revision)
-        self.model = AutoModelForCausalLM.from_pretrained(model_id, revision=self.revision, dtype=torch.float32)
+        self.model = AutoModelForCausalLM.from_pretrained(model_id, revision=self.revision, dtype=self.dtype)
+        self.model.to(self.device)  # type: ignore[arg-type]  # transformers' stubs mistype .to(device)
         self.model.eval()
         self._torch = torch
         self._prefix_key: str | None = None
@@ -107,7 +113,12 @@ class LocalHFClient:
 
     @property
     def settings(self) -> dict:
-        return {"decoding": "greedy", "max_new_tokens": self.max_new_tokens}
+        return {
+            "decoding": "greedy",
+            "max_new_tokens": self.max_new_tokens,
+            "device": self.device,
+            "dtype": str(self.dtype).removeprefix("torch."),
+        }
 
     def _ids(self, messages: list[Message], generation_prompt: bool) -> list[int]:
         out: Any = self.tok.apply_chat_template(messages, add_generation_prompt=generation_prompt, tokenize=True)
@@ -122,7 +133,7 @@ class LocalHFClient:
         torch = self._torch
         ids = self._ids(prefix, generation_prompt=False)
         with torch.no_grad():
-            out = self.model(torch.tensor([ids]), use_cache=True)
+            out = self.model(torch.tensor([ids], device=self.device), use_cache=True)
         self._prefix_key, self._prefix_ids, self._prefix_kv = key, ids, out.past_key_values
 
     def complete(self, prefix: list[Message], user: str) -> Completion:
@@ -136,8 +147,8 @@ class LocalHFClient:
         started = time.perf_counter()
         with torch.no_grad():
             out = self.model.generate(
-                input_ids=torch.tensor([full]),
-                attention_mask=torch.ones(1, len(full), dtype=torch.long),
+                input_ids=torch.tensor([full], device=self.device),
+                attention_mask=torch.ones(1, len(full), dtype=torch.long, device=self.device),
                 past_key_values=copy.deepcopy(self._prefix_kv) if reuse else None,
                 max_new_tokens=self.max_new_tokens,
                 do_sample=False,
