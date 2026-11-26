@@ -1,0 +1,626 @@
+{
+  "command": "txncat train baseline",
+  "date": "2026-11-26T16:10:55+00:00",
+  "commit": "7a0ea85+uncommitted",
+  "rows": {
+    "train": 13729,
+    "val": 3067,
+    "test": 3204,
+    "external_test": 2100
+  },
+  "external_seen_merchant_rows": 414,
+  "models": {
+    "E0_majority": {
+      "params": {
+        "class": "Meals & Entertainment"
+      },
+      "val_macro_f1_selected": 0.02085682074408117,
+      "fit_seconds": 0.0,
+      "tuning": [],
+      "scores": {
+        "val": {
+          "n": 3067,
+          "accuracy": 0.15683077926312358,
+          "macro_f1": 0.02085682074408117,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.0,
+            "Bank Fees & Charges": 0.0,
+            "Fuel & Auto": 0.0,
+            "Income / Deposits": 0.0,
+            "Meals & Entertainment": 0.2711386696730552,
+            "Office Supplies": 0.0,
+            "Other": 0.0,
+            "Professional Services": 0.0,
+            "Rent & Lease": 0.0,
+            "Shipping & Postage": 0.0,
+            "Software & Subscriptions": 0.0,
+            "Travel": 0.0,
+            "Utilities": 0.0
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "test": {
+          "n": 3204,
+          "accuracy": 0.13514357053682896,
+          "macro_f1": 0.018316025464774434,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.0,
+            "Bank Fees & Charges": 0.0,
+            "Fuel & Auto": 0.0,
+            "Income / Deposits": 0.0,
+            "Meals & Entertainment": 0.23810833104206763,
+            "Office Supplies": 0.0,
+            "Other": 0.0,
+            "Professional Services": 0.0,
+            "Rent & Lease": 0.0,
+            "Shipping & Postage": 0.0,
+            "Software & Subscriptions": 0.0,
+            "Travel": 0.0,
+            "Utilities": 0.0
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test": {
+          "n": 2100,
+          "accuracy": 0.14285714285714285,
+          "macro_f1": 0.03571428571428571,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.0,
+            "Income / Deposits": 0.0,
+            "Meals & Entertainment": 0.25,
+            "Other": 0.0,
+            "Rent & Lease": 0.0,
+            "Travel": 0.0,
+            "Utilities": 0.0
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test_unseen_merchants": {
+          "n": 1686,
+          "accuracy": 0.1601423487544484,
+          "macro_f1": 0.039439088518843125,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.0,
+            "Income / Deposits": 0.0,
+            "Meals & Entertainment": 0.27607361963190186,
+            "Other": 0.0,
+            "Rent & Lease": 0.0,
+            "Travel": 0.0,
+            "Utilities": 0.0
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        }
+      }
+    },
+    "E0_rules": {
+      "params": {
+        "rules": 12,
+        "fallback": "Meals & Entertainment"
+      },
+      "val_macro_f1_selected": 0.6738019767232835,
+      "fit_seconds": 0.2,
+      "tuning": [],
+      "scores": {
+        "val": {
+          "n": 3067,
+          "accuracy": 0.6527551353113792,
+          "macro_f1": 0.6738019767232835,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.7109004739336493,
+            "Bank Fees & Charges": 0.75,
+            "Fuel & Auto": 0.8037383177570093,
+            "Income / Deposits": 0.8683385579937304,
+            "Meals & Entertainment": 0.48075962018990503,
+            "Office Supplies": 0.8226691042047533,
+            "Other": 0.0,
+            "Professional Services": 0.8016877637130801,
+            "Rent & Lease": 0.7891156462585034,
+            "Shipping & Postage": 0.8298969072164949,
+            "Software & Subscriptions": 0.6181818181818182,
+            "Travel": 0.607773851590106,
+            "Utilities": 0.6763636363636364
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "test": {
+          "n": 3204,
+          "accuracy": 0.6622971285892634,
+          "macro_f1": 0.6663962961716241,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.5634920634920635,
+            "Bank Fees & Charges": 0.7851239669421488,
+            "Fuel & Auto": 0.7448275862068966,
+            "Income / Deposits": 0.9528392685274302,
+            "Meals & Entertainment": 0.45269210663878723,
+            "Office Supplies": 0.7257731958762886,
+            "Other": 0.0,
+            "Professional Services": 0.7538461538461538,
+            "Rent & Lease": 0.8,
+            "Shipping & Postage": 0.8013698630136986,
+            "Software & Subscriptions": 0.6193181818181818,
+            "Travel": 0.7272727272727273,
+            "Utilities": 0.7365967365967366
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test": {
+          "n": 2100,
+          "accuracy": 0.5285714285714286,
+          "macro_f1": 0.5250688306390957,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.9380530973451328,
+            "Income / Deposits": 0.4416243654822335,
+            "Meals & Entertainment": 0.38735177865612647,
+            "Other": 0.0,
+            "Rent & Lease": 0.9356521739130435,
+            "Travel": 0.4506329113924051,
+            "Utilities": 0.5221674876847291
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test_unseen_merchants": {
+          "n": 1686,
+          "accuracy": 0.5344009489916963,
+          "macro_f1": 0.50976779127024,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.912718204488778,
+            "Income / Deposits": 0.5384615384615384,
+            "Meals & Entertainment": 0.4169278996865204,
+            "Other": 0.0,
+            "Rent & Lease": 0.9356521739130435,
+            "Travel": 0.26956521739130435,
+            "Utilities": 0.49504950495049505
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        }
+      }
+    },
+    "E1_logreg_tfidf": {
+      "params": {
+        "C": 0.3,
+        "class_weight": "balanced"
+      },
+      "val_macro_f1_selected": 0.8524933730594589,
+      "fit_seconds": 7.9,
+      "tuning": [
+        {
+          "C": 0.3,
+          "val_macro_f1": 0.8524933730594589
+        },
+        {
+          "C": 1.0,
+          "val_macro_f1": 0.851673567758472
+        },
+        {
+          "C": 3.0,
+          "val_macro_f1": 0.8495190277831128
+        },
+        {
+          "C": 10.0,
+          "val_macro_f1": 0.8468035148224252
+        }
+      ],
+      "scores": {
+        "val": {
+          "n": 3067,
+          "accuracy": 0.8597978480599935,
+          "macro_f1": 0.8524933730594589,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.7958477508650519,
+            "Bank Fees & Charges": 0.9873417721518988,
+            "Fuel & Auto": 0.7461538461538462,
+            "Income / Deposits": 0.9686609686609686,
+            "Meals & Entertainment": 0.8876080691642652,
+            "Office Supplies": 0.7946428571428571,
+            "Other": 0.7757575757575758,
+            "Professional Services": 0.8661971830985915,
+            "Rent & Lease": 0.8923076923076924,
+            "Shipping & Postage": 0.7721822541966427,
+            "Software & Subscriptions": 0.9695817490494296,
+            "Travel": 0.772020725388601,
+            "Utilities": 0.8541114058355438
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "test": {
+          "n": 3204,
+          "accuracy": 0.8542446941323346,
+          "macro_f1": 0.8393580717798728,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.7044025157232704,
+            "Bank Fees & Charges": 1.0,
+            "Fuel & Auto": 0.7829059829059829,
+            "Income / Deposits": 0.9926470588235294,
+            "Meals & Entertainment": 0.7913669064748201,
+            "Office Supplies": 0.8050089445438283,
+            "Other": 0.7925696594427245,
+            "Professional Services": 0.8733333333333333,
+            "Rent & Lease": 0.7752808988764045,
+            "Shipping & Postage": 0.7486631016042781,
+            "Software & Subscriptions": 0.9795918367346939,
+            "Travel": 0.7407407407407407,
+            "Utilities": 0.9251439539347409
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test": {
+          "n": 2100,
+          "accuracy": 0.530952380952381,
+          "macro_f1": 0.5762099149119175,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.9142857142857143,
+            "Income / Deposits": 0.4,
+            "Meals & Entertainment": 0.6210720887245841,
+            "Other": 0.3013698630136986,
+            "Rent & Lease": 0.7338129496402878,
+            "Travel": 0.5171717171717172,
+            "Utilities": 0.5457570715474209
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test_unseen_merchants": {
+          "n": 1686,
+          "accuracy": 0.44958481613285883,
+          "macro_f1": 0.46893592379377574,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.886021505376344,
+            "Income / Deposits": 0.1437908496732026,
+            "Meals & Entertainment": 0.5840336134453782,
+            "Other": 0.23255813953488372,
+            "Rent & Lease": 0.7364620938628159,
+            "Travel": 0.25333333333333335,
+            "Utilities": 0.44635193133047213
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        }
+      }
+    },
+    "E2_xgb_tfidf_sql": {
+      "params": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "min_child_weight": 1,
+        "n_estimators_used": 278
+      },
+      "val_macro_f1_selected": 0.8765582791144583,
+      "fit_seconds": 631.8,
+      "tuning": [
+        {
+          "max_depth": 4,
+          "learning_rate": 0.1,
+          "min_child_weight": 1,
+          "best_iteration": 277,
+          "val_macro_f1": 0.8765582791144583
+        },
+        {
+          "max_depth": 4,
+          "learning_rate": 0.1,
+          "min_child_weight": 3,
+          "best_iteration": 337,
+          "val_macro_f1": 0.8722499393125609
+        },
+        {
+          "max_depth": 4,
+          "learning_rate": 0.3,
+          "min_child_weight": 1,
+          "best_iteration": 90,
+          "val_macro_f1": 0.8742223002887476
+        },
+        {
+          "max_depth": 4,
+          "learning_rate": 0.3,
+          "min_child_weight": 3,
+          "best_iteration": 89,
+          "val_macro_f1": 0.8725690816787635
+        },
+        {
+          "max_depth": 6,
+          "learning_rate": 0.1,
+          "min_child_weight": 1,
+          "best_iteration": 193,
+          "val_macro_f1": 0.8725713299419867
+        },
+        {
+          "max_depth": 6,
+          "learning_rate": 0.1,
+          "min_child_weight": 3,
+          "best_iteration": 187,
+          "val_macro_f1": 0.8712139161528174
+        },
+        {
+          "max_depth": 6,
+          "learning_rate": 0.3,
+          "min_child_weight": 1,
+          "best_iteration": 59,
+          "val_macro_f1": 0.8732838580465889
+        },
+        {
+          "max_depth": 6,
+          "learning_rate": 0.3,
+          "min_child_weight": 3,
+          "best_iteration": 65,
+          "val_macro_f1": 0.8663647401301109
+        },
+        {
+          "max_depth": 8,
+          "learning_rate": 0.1,
+          "min_child_weight": 1,
+          "best_iteration": 164,
+          "val_macro_f1": 0.8694823454260198
+        },
+        {
+          "max_depth": 8,
+          "learning_rate": 0.1,
+          "min_child_weight": 3,
+          "best_iteration": 133,
+          "val_macro_f1": 0.8708270813304089
+        },
+        {
+          "max_depth": 8,
+          "learning_rate": 0.3,
+          "min_child_weight": 1,
+          "best_iteration": 58,
+          "val_macro_f1": 0.8653228033552061
+        },
+        {
+          "max_depth": 8,
+          "learning_rate": 0.3,
+          "min_child_weight": 3,
+          "best_iteration": 38,
+          "val_macro_f1": 0.8696377891577538
+        }
+      ],
+      "scores": {
+        "val": {
+          "n": 3067,
+          "accuracy": 0.8849038148027388,
+          "macro_f1": 0.8765582791144583,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.823943661971831,
+            "Bank Fees & Charges": 0.9974424552429667,
+            "Fuel & Auto": 0.8131868131868132,
+            "Income / Deposits": 1.0,
+            "Meals & Entertainment": 0.9568874868559412,
+            "Office Supplies": 0.8108108108108109,
+            "Other": 0.7298850574712644,
+            "Professional Services": 0.8689655172413793,
+            "Rent & Lease": 0.956989247311828,
+            "Shipping & Postage": 0.8054919908466819,
+            "Software & Subscriptions": 0.8936936936936937,
+            "Travel": 0.805,
+            "Utilities": 0.9329608938547486
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "test": {
+          "n": 3204,
+          "accuracy": 0.8857677902621723,
+          "macro_f1": 0.8745303174902693,
+          "per_class_f1": {
+            "Advertising & Marketing": 0.7341772151898734,
+            "Bank Fees & Charges": 0.98989898989899,
+            "Fuel & Auto": 0.7887323943661971,
+            "Income / Deposits": 1.0,
+            "Meals & Entertainment": 0.9245508982035928,
+            "Office Supplies": 0.8020477815699659,
+            "Other": 0.8083832335329342,
+            "Professional Services": 0.8828828828828829,
+            "Rent & Lease": 0.9668874172185431,
+            "Shipping & Postage": 0.8010335917312662,
+            "Software & Subscriptions": 0.9003831417624522,
+            "Travel": 0.7979539641943734,
+            "Utilities": 0.9719626168224299
+          },
+          "labels": [
+            "Advertising & Marketing",
+            "Bank Fees & Charges",
+            "Fuel & Auto",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Other",
+            "Professional Services",
+            "Rent & Lease",
+            "Shipping & Postage",
+            "Software & Subscriptions",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test": {
+          "n": 2100,
+          "accuracy": 0.33285714285714285,
+          "macro_f1": 0.36448598775217184,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.821917808219178,
+            "Income / Deposits": 0.8450704225352113,
+            "Meals & Entertainment": 0.006644518272425249,
+            "Other": 0.12804878048780488,
+            "Rent & Lease": 0.0,
+            "Travel": 0.40545808966861596,
+            "Utilities": 0.3442622950819672
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        },
+        "external_test_unseen_merchants": {
+          "n": 1686,
+          "accuracy": 0.26986951364175565,
+          "macro_f1": 0.32918749990121415,
+          "per_class_f1": {
+            "Bank Fees & Charges": 0.8162162162162162,
+            "Income / Deposits": 0.8161616161616162,
+            "Meals & Entertainment": 0.007380073800738007,
+            "Other": 0.07612456747404844,
+            "Rent & Lease": 0.0,
+            "Travel": 0.23255813953488372,
+            "Utilities": 0.35587188612099646
+          },
+          "labels": [
+            "Bank Fees & Charges",
+            "Income / Deposits",
+            "Meals & Entertainment",
+            "Other",
+            "Rent & Lease",
+            "Travel",
+            "Utilities"
+          ]
+        }
+      }
+    }
+  },
+  "total_seconds": 641.4
+}
