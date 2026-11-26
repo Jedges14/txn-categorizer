@@ -9,7 +9,7 @@ from sqlalchemy import Engine, create_engine, text
 from txncat.config import REPO_ROOT, get_settings
 
 SQL_DIR = REPO_ROOT / "sql"
-SCHEMA_FILES = ("001_schema.sql", "002_external_test.sql")
+SCHEMA_FILES = ("001_schema.sql", "002_external_test.sql", "features.sql")
 
 
 def make_engine(url: str | None = None) -> Engine:
