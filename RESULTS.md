@@ -175,7 +175,7 @@ prompt was identical to an earlier row (duplicate description + amount); they ke
 ## M5: Significance, confidence intervals, cost and latency
 
 **Commands:** `txncat bench latency` (2026-11-27, commit `6221327`), then `txncat report` (2026-11-27, commit
-`b761c3f`). `txncat report` reads only `predictions/*.csv` and `reports/metrics/*.json`: no database, model or network.
+`b29dd97`; same code as `b761c3f`). `txncat report` reads only `predictions/*.csv` and `reports/metrics/*.json`: no database, model or network.
 It regenerates [`reports/results_tables.md`](reports/results_tables.md) (every table below, in full),
 `reports/metrics/significance.json` (per-seed tests and CIs) and the figures.
 
