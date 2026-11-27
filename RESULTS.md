@@ -171,3 +171,83 @@ prompt was identical to an earlier row (duplicate description + amount); they ke
   the model echoes; and "Transfer" is a natural name the examples didn't rule out. Not fixed, because choosing a fix from
   external results would be tuning on test data; it's an error-analysis item for M6.
 - Significance of these differences is tested in M5.
+
+## M5: Significance, confidence intervals, cost and latency
+
+**Commands:** `txncat bench latency` (2026-11-27, commit `6221327`), then `txncat report` (2026-11-27, commit
+`b761c3f`). `txncat report` reads only `predictions/*.csv` and `reports/metrics/*.json`: no database, model or network.
+It regenerates [`reports/results_tables.md`](reports/results_tables.md) (every table below, in full),
+`reports/metrics/significance.json` (per-seed tests and CIs) and the figures.
+
+**Method**
+- 95% CIs: percentile bootstrap, 1,000 row resamples (seed 0), with the class set fixed to the full split.
+- Significance: exact McNemar test (two-sided binomial on the discordant rows) for every pair, using the same rows.
+- Holm correction across the 8 tests on each split.
+- Pairs tested: the SPEC pairs (E2 vs E3, E2 vs E5, E3 vs E5), plus E4 vs E5 to check whether few-shot helps.
+- E3 is tested seed by seed. An E3 pair counts as significant only if all 3 seeds are significant in the same direction.
+- McNemar tests error rate (rows right or wrong). The paired bootstrap ΔF1 CI tests macro-F1. Both are reported.
+
+**Macro-F1 [95% CI]** (E3: mean ± std of 3 seeds)
+
+| Model | test | external |
+|---|---|---|
+| E0 keyword rules | 0.666 [0.649, 0.681] | 0.525 [0.508, 0.543] |
+| E1 logistic regression | 0.839 [0.825, 0.852] | 0.576 [0.556, 0.595] |
+| E2 XGBoost | **0.875 [0.863, 0.886]** | 0.364 [0.349, 0.380] |
+| E3 DistilBERT | 0.850 ± 0.016 | 0.613 ± 0.005 |
+| E4 LLM zero-shot | 0.608 [0.591, 0.624] | 0.644 [0.627, 0.659] |
+| E5 LLM few-shot | 0.670 [0.653, 0.686] | **0.667 [0.649, 0.685]** |
+
+**Pairwise tests** (Holm-adjusted p; for E3 pairs, the largest over seeds)
+
+| Split | Pair | ΔF1 (A−B) | Holm p | Verdict |
+|---|---|---|---|---|
+| test | E2 vs E3 | +0.015 to +0.043 over seeds | 0.9 | **not significant** (only E3's weakest seed differs) |
+| test | E2 vs E5 | +0.205 [+0.188, +0.223] | 1e-83 | E2 better |
+| test | E3 vs E5 | +0.162 to +0.190 | 6e-42 | E3 better |
+| test | E4 vs E5 | −0.061 [−0.078, −0.046] | 3e-7 | E5 better (few-shot helps) |
+| external | E2 vs E3 | −0.255 to −0.244 | 4e-62 | E3 better |
+| external | E2 vs E5 | −0.303 [−0.324, −0.281] | 5e-122 | E5 better |
+| external | E3 vs E5 | −0.059 to −0.048 | 0.0012 | **E5 better**, on all 3 seeds |
+| external | E4 vs E5 | −0.024 [−0.042, −0.004] | 0.9 | not significant by McNemar (263 vs 259 discordant rows) |
+
+**Cost and latency.** API cost is $0 for every model, since nothing calls a paid service. Latency is per prediction at
+batch size 1, p50 / p95 over 300 test rows after warm-up, measured on an Intel laptop CPU and an RTX 4060 Laptop GPU
+with nothing else running.
+
+| Model | training compute | latency p50 / p95 |
+|---|---|---|
+| E1 | 8 s (whole grid, CPU) | 1.40 / 1.88 ms (CPU) |
+| E2 | 632 s (whole grid, CPU) | 4.79 / 5.71 ms (CPU) |
+| E3 | 826 s per seed (CPU) | 10.97 / 19.36 ms (CPU); 5.24 / 6.14 ms (GPU) |
+| E4 / E5 | none | 193 / 289 ms and 190 / 291 ms (GPU) |
+
+How latency was measured:
+- E1 and E2 were refit with their M2-selected hyperparameters, because M2 did not save models.
+- E3 is timed on the base DistilBERT with a 13-way head, which has the same compute as the fine-tuned weights.
+- E1–E3 times include feature extraction or tokenization.
+
+**Reading it**
+- **On the synthetic test split, XGBoost and the fine-tuned encoder are statistically tied.** E2's +0.015 to +0.043
+  lead is significant against only one of the three E3 seeds. Both beat the LLMs by a wide, significant margin.
+- **On the independent external set, the few-shot LLM is significantly better than every trained model.** This holds
+  for E3 on all three seeds (ΔF1 −0.048 to −0.059, Holm p ≤ 0.0012) and by a wide margin for E2. This is the headline
+  generalization result.
+- Few-shot vs zero-shot:
+  - On test, few-shot clearly helps.
+  - On external, McNemar finds no difference in error rate. The macro-F1 gain (+0.024) has a bootstrap CI that only
+    just excludes 0.
+  - Few-shot also produced more invalid replies on external (M4), which offsets part of its gains.
+- **Latency trade-off:** the LLM is about 36× slower than DistilBERT on the same GPU (190 vs 5.2 ms) and about 135×
+  slower than E1 on CPU. All are $0 to run locally. In a live product the encoder (E3) gives the best balance:
+  - It is within the noise of the best model on the synthetic data.
+  - It is second best on external.
+  - It takes about 5–11 ms per transaction.
+  - The LLM buys about 5 points of external macro-F1 at roughly 190 ms.
+
+![Macro-F1 with CIs](reports/figures/f1_ci.png)
+![Latency vs macro-F1](reports/figures/latency_vs_f1.png)
+
+Confusion matrices: [E2 on test](reports/figures/confusion_E2_test.png),
+[E2 on external](reports/figures/confusion_E2_external_test.png),
+[E5 on external](reports/figures/confusion_E5_external_test.png). Error analysis follows in M6.
