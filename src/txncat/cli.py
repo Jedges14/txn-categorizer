@@ -1,7 +1,7 @@
 """`txncat` command-line entry point.
 
 Commands so far: `db check|init` (M0), `data build|load|report` (M1). Later milestones add `train baseline`
-(M2), `train finetune` (M3), `llm run` (M4) and `report` (M5).
+(M2), `train finetune` (M3), `llm run` (M4), `bench latency` and `report` (M5).
 """
 
 from __future__ import annotations
@@ -222,7 +222,58 @@ def build_parser() -> argparse.ArgumentParser:
     lr.add_argument("--model", default="Qwen/Qwen2.5-1.5B-Instruct")
     lr.add_argument("--threads", type=int, default=None)
     lr.set_defaults(func=_llm_run)
+
+    bench = sub.add_parser("bench", help="benchmarks")
+    bench_sub = bench.add_subparsers(dest="bench_command", required=True)
+    bench_sub.add_parser(
+        "latency", help="per-prediction latency of E1-E3 (batch size 1) -> reports/metrics/latency.json"
+    ).set_defaults(func=_bench_latency)
+
+    rep = sub.add_parser("report", help="M5 tables, significance tests and figures from saved predictions")
+    rep.add_argument("--n-boot", type=int, default=1000)
+    rep.add_argument("--no-figures", action="store_true")
+    rep.set_defaults(func=_report)
     return parser
+
+
+def _report(args: argparse.Namespace) -> int:
+    from txncat.eval.report import run
+
+    try:
+        return run(n_boot=args.n_boot, make_figures=not args.no_figures)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"cannot build the report: {exc}", file=sys.stderr)
+        return 1
+
+
+def _bench_latency(_: argparse.Namespace) -> int:
+    import json
+    from datetime import UTC, datetime
+
+    from txncat.eval.latency import measure
+    from txncat.features.sql_features import load_features
+    from txncat.models.train_cli import _git_commit
+
+    try:
+        engine = make_engine()
+        apply_schema(engine)
+        df = load_features(engine)
+    except OperationalError as exc:
+        print(f"Cannot reach PostgreSQL: {exc.orig}", file=sys.stderr)
+        return 1
+    import platform
+
+    result = {
+        "command": "txncat bench latency",
+        "date": datetime.now(UTC).isoformat(timespec="seconds"),
+        "commit": _git_commit(),
+        "machine": {"processor": platform.processor(), "platform": platform.platform()},
+        **measure(df),
+    }
+    path = REPO_ROOT / "reports" / "metrics" / "latency.json"
+    path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(f"saved {path.relative_to(REPO_ROOT)}")
+    return 0
 
 
 def _llm_run(args: argparse.Namespace) -> int:
