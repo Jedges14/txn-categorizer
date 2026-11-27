@@ -1,0 +1,220 @@
+{
+  "command": "txncat errors",
+  "date": "2026-11-27T00:42:35+00:00",
+  "commit": "2f8e15a",
+  "best": "E5",
+  "n_rows": 2100,
+  "n_errors": 752,
+  "counts": {
+    "invalid_reply": 136,
+    "credit_on_expense": 46,
+    "taxonomy_boundary": 115,
+    "rail_wrapper": 58,
+    "hedge_other": 361,
+    "confusion": 36
+  },
+  "by_true_class": {
+    "invalid_reply": {
+      "Other": 38,
+      "Utilities": 38,
+      "Bank Fees & Charges": 23,
+      "Travel": 20,
+      "Meals & Entertainment": 15,
+      "Rent & Lease": 2
+    },
+    "credit_on_expense": {
+      "Travel": 25,
+      "Utilities": 9,
+      "Meals & Entertainment": 7,
+      "Rent & Lease": 3,
+      "Bank Fees & Charges": 2
+    },
+    "taxonomy_boundary": {
+      "Other": 115
+    },
+    "rail_wrapper": {
+      "Utilities": 35,
+      "Travel": 20,
+      "Meals & Entertainment": 2,
+      "Rent & Lease": 1
+    },
+    "hedge_other": {
+      "Meals & Entertainment": 131,
+      "Travel": 108,
+      "Utilities": 106,
+      "Rent & Lease": 16
+    },
+    "confusion": {
+      "Bank Fees & Charges": 12,
+      "Travel": 11,
+      "Meals & Entertainment": 10,
+      "Utilities": 3
+    }
+  },
+  "fixed_by": {
+    "invalid_reply": {
+      "E1": 0.47058823529411764,
+      "E2": 0.23529411764705882,
+      "E3_seed0": 0.39705882352941174,
+      "E3_seed1": 0.2867647058823529,
+      "E3_seed2": 0.3161764705882353,
+      "E4": 0.18382352941176472,
+      "E3": 0.3333333333333333
+    },
+    "credit_on_expense": {
+      "E1": 0.45652173913043476,
+      "E2": 0.0,
+      "E3_seed0": 0.45652173913043476,
+      "E3_seed1": 0.5869565217391305,
+      "E3_seed2": 0.5652173913043478,
+      "E4": 0.45652173913043476,
+      "E3": 0.5362318840579711
+    },
+    "taxonomy_boundary": {
+      "E1": 0.2782608695652174,
+      "E2": 0.0782608695652174,
+      "E3_seed0": 0.28695652173913044,
+      "E3_seed1": 0.26956521739130435,
+      "E3_seed2": 0.3652173913043478,
+      "E4": 0.0,
+      "E3": 0.3072463768115942
+    },
+    "rail_wrapper": {
+      "E1": 0.3275862068965517,
+      "E2": 0.25862068965517243,
+      "E3_seed0": 0.5517241379310345,
+      "E3_seed1": 0.5689655172413793,
+      "E3_seed2": 0.5689655172413793,
+      "E4": 0.25862068965517243,
+      "E3": 0.5632183908045977
+    },
+    "hedge_other": {
+      "E1": 0.40166204986149584,
+      "E2": 0.11357340720221606,
+      "E3_seed0": 0.4376731301939058,
+      "E3_seed1": 0.45706371191135736,
+      "E3_seed2": 0.3850415512465374,
+      "E4": 0.5429362880886427,
+      "E3": 0.4265927977839335
+    },
+    "confusion": {
+      "E1": 0.3611111111111111,
+      "E2": 0.1388888888888889,
+      "E3_seed0": 0.5833333333333334,
+      "E3_seed1": 0.5833333333333334,
+      "E3_seed2": 0.5833333333333334,
+      "E4": 0.16666666666666666,
+      "E3": 0.5833333333333334
+    }
+  },
+  "other_overuse": {
+    "test": {
+      "E4": {
+        "pos_prefix": {
+          "rows": 186,
+          "share_answered_other": 0.0
+        },
+        "no_prefix": {
+          "rows": 2865,
+          "share_answered_other": 0.0017452006980802793
+        }
+      },
+      "E5": {
+        "pos_prefix": {
+          "rows": 186,
+          "share_answered_other": 0.1881720430107527
+        },
+        "no_prefix": {
+          "rows": 2865,
+          "share_answered_other": 0.028970331588132635
+        }
+      }
+    },
+    "external_test": {
+      "E4": {
+        "pos_prefix": {
+          "rows": 51,
+          "share_answered_other": 0.0
+        },
+        "no_prefix": {
+          "rows": 1749,
+          "share_answered_other": 0.003430531732418525
+        }
+      },
+      "E5": {
+        "pos_prefix": {
+          "rows": 51,
+          "share_answered_other": 0.8823529411764706
+        },
+        "no_prefix": {
+          "rows": 1749,
+          "share_answered_other": 0.1812464265294454
+        }
+      }
+    }
+  },
+  "types": [
+    {
+      "key": "invalid_reply",
+      "title": "Invalid reply",
+      "meaning": "The LLM answered with a non-category such as 'Unknown' or 'Transfer'."
+    },
+    {
+      "key": "credit_on_expense",
+      "title": "Credit on an expense category",
+      "meaning": "Money coming IN on an expense category (a refund or reversal, e.g. a hotel refund) read as Income."
+    },
+    {
+      "key": "taxonomy_boundary",
+      "title": "Taxonomy boundary (true 'Other')",
+      "meaning": "The source dataset files groceries, pharmacy, medical, ATM cash etc. under Other (personal spending); the model picks the nearest business category (e.g. groceries \u2192 Meals)."
+    },
+    {
+      "key": "rail_wrapper",
+      "title": "Misread payment-rail text",
+      "meaning": "Processor or bank wording ('WITHDRAWAL FROM', 'PAYPAL INST XFER', 'WEB ID') around the merchant drives the answer, e.g. 'WITHDRAWAL FROM PG AND E' \u2192 Bank Fees."
+    },
+    {
+      "key": "hedge_other",
+      "title": "Hedged to 'Other'",
+      "meaning": "A recognisable merchant of a specific category (restaurant, cruise line, utility) answered as Other."
+    },
+    {
+      "key": "confusion",
+      "title": "Category confusion",
+      "meaning": "Any other wrong specific category (e.g. car rental \u2192 Rent & Lease)."
+    }
+  ],
+  "sample_ids": [
+    64834,
+    63431,
+    64718,
+    64760,
+    63973,
+    63868,
+    63791,
+    64011,
+    64070,
+    64002,
+    64757,
+    64939,
+    64942,
+    64738,
+    64707,
+    64807,
+    65128,
+    65160,
+    63409,
+    63295,
+    64337,
+    64372,
+    64857,
+    65001,
+    64767,
+    65134,
+    64115,
+    64228,
+    64336,
+    64374
+  ]
+}
