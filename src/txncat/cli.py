@@ -233,7 +233,24 @@ def build_parser() -> argparse.ArgumentParser:
     rep.add_argument("--n-boot", type=int, default=1000)
     rep.add_argument("--no-figures", action="store_true")
     rep.set_defaults(func=_report)
+
+    sub.add_parser(
+        "errors", help="M6 error analysis of the best external-test model (needs the database)"
+    ).set_defaults(func=_errors)
     return parser
+
+
+def _errors(_: argparse.Namespace) -> int:
+    from txncat.eval.errors_cli import run
+
+    try:
+        return run()
+    except OperationalError as exc:
+        print(f"Cannot reach PostgreSQL: {exc.orig}", file=sys.stderr)
+        return 1
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"cannot build the error analysis: {exc}", file=sys.stderr)
+        return 1
 
 
 def _report(args: argparse.Namespace) -> int:
