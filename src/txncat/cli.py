@@ -271,7 +271,7 @@ def _bench_latency(_: argparse.Namespace) -> int:
         **measure(df),
     }
     path = REPO_ROOT / "reports" / "metrics" / "latency.json"
-    path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(f"saved {path.relative_to(REPO_ROOT)}")
     return 0
 

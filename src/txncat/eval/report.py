@@ -427,7 +427,7 @@ def run(n_boot: int = N_BOOT, make_figures: bool = True) -> int:
     cost = cost_latency(METRICS_DIR)
     METRICS_DIR.mkdir(parents=True, exist_ok=True)
     (METRICS_DIR / "significance.json").write_text(
-        json.dumps({**meta, "scores": scores, "pairs": sig, "cost_latency": cost}, indent=2), encoding="utf-8"
+        json.dumps({**meta, "scores": scores, "pairs": sig, "cost_latency": cost}, indent=2) + "\n", encoding="utf-8"
     )
     TABLES_MD.write_text(markdown(scores, sig, cost, meta), encoding="utf-8")
     print(TABLES_MD.read_text(encoding="utf-8"))
