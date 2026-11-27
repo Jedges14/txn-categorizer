@@ -251,3 +251,62 @@ How latency was measured:
 Confusion matrices: [E2 on test](reports/figures/confusion_E2_test.png),
 [E2 on external](reports/figures/confusion_E2_external_test.png),
 [E5 on external](reports/figures/confusion_E5_external_test.png). Error analysis follows in M6.
+
+## M6: Error analysis
+
+**Command:** `txncat errors` (2026-11-27, commit `2f8e15a`). It reads predictions plus each row's description from
+Postgres and writes [`reports/error_analysis.md`](reports/error_analysis.md) (all tables and the 30-row sample),
+`reports/metrics/error_analysis.json` and `reports/figures/error_types.png`. The executed walk-through is
+[`notebooks/03_results.ipynb`](notebooks/03_results.ipynb).
+
+**Scope.** There is no real test set, so the error analysis uses the best model on the external set, E5 (few-shot LLM),
+which gets 752 of 2,100 rows wrong.
+
+**Method.**
+- Each error gets exactly one type from deterministic rules in `src/txncat/eval/errors.py` (first match wins), so the
+  grouping is reproducible.
+- I wrote the rules after reading a seeded random sample of 60 E5 errors. That is acceptable for *describing* errors,
+  because no model, prompt or setting was changed as a result.
+- The SPEC's "top 30 misclassified rows" is a seeded random sample of 30 errors, because the LLM gives no confidence
+  score to rank by. I read all 30 and agree with their assigned types. Two are borderline: `AQUA AMERICA ONLINE PMT
+  WEB ID` has rail text but was answered "Other", and `COURTYARD; Charge` → Bank Fees could be either type.
+
+| Error type | E5 errors | share | E1 right | E2 right | E3 right (seed mean) | E4 right |
+|---|---|---|---|---|---|---|
+| Hedged to "Other": recognisable merchant answered as Other | 361 | 48% | 40% | 11% | 43% | **54%** |
+| Invalid reply ("Unknown", "Transfer") | 136 | 18% | 47% | 24% | 33% | 18% |
+| Taxonomy boundary: true "Other" (groceries, pharmacy, ATM cash) given a business category | 115 | 15% | 28% | 8% | 31% | 0% |
+| Misread payment-rail text ("WITHDRAWAL FROM PG AND E" → Bank Fees) | 58 | 8% | 33% | 26% | **56%** | 26% |
+| Credit on an expense category (refund or reversal) read as Income | 46 | 6% | 46% | 0% | **54%** | 46% |
+| Other category confusion (car rental → Rent & Lease) | 36 | 5% | 36% | 14% | **58%** | 17% |
+
+"X right" is the share of that type's rows (all wrong for E5) that model X gets right.
+
+**Finding: the few-shot examples push the LLM towards "Other".** This table shows the share of rows whose true class
+is *not* Other that each LLM answers "Other":
+
+| Split, subset | rows | E4 zero-shot | E5 few-shot |
+|---|---|---|---|
+| test, Square/Toast prefix (`SQ *`, `TST*`) | 186 | 0.0% | 18.8% |
+| test, no prefix | 2,865 | 0.2% | 2.9% |
+| external, Square/Toast prefix | 51 | 0.0% | **88.2%** |
+| external, no prefix | 1,749 | 0.3% | 18.1% |
+
+- E5 was shown three train examples of Other, chosen by seed. One of them is `SQ *MEMPHIS FLORIST`.
+- Zero-shot almost never says "Other" wrongly. Few-shot does so on 18% of external rows, and on 88% of Square/Toast
+  rows.
+- This is a correlation, not a tested cause.
+- The fix (an example-selection rule, e.g. "Other" examples without a POS prefix, or more examples per class) has to be
+  chosen and checked on val, not on these test sets. It is listed as a next step, not applied.
+
+**What the other models fix**
+- **Zero-shot E4** gets 54% of the "Other" hedges right. The two prompts make different mistakes: few-shot gains on
+  rare business categories but over-uses Other.
+- **Fine-tuned E3** is the best fixer for bank wording, refunds and category confusions (54–58% of those rows).
+- **XGBoost E2** fixes almost nothing on the external set. It gets 0% of the credit rows right, consistent with M2's
+  finding that it relies on amount/date features that external rows lack.
+- **Taxonomy-boundary errors** (115) are partly a labelling mismatch. The external dataset uses personal-finance labels,
+  so it files groceries and pharmacy under Other, while a business bookkeeper might record them as Meals or Office
+  Supplies. No model does well on them (≤31%).
+
+![Error types](reports/figures/error_types.png)
