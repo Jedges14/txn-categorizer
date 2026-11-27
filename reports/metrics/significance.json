@@ -1,0 +1,622 @@
+{
+  "command": "txncat report",
+  "date": "2026-11-27T00:26:32+00:00",
+  "commit": "b29dd97",
+  "n_boot": 1000,
+  "alpha": 0.05,
+  "scores": {
+    "test": {
+      "E0_rules": {
+        "n": 3204,
+        "variants": [
+          {
+            "macro_f1": 0.6663962961716241,
+            "ci95": [
+              0.6494024746082802,
+              0.6808360416584067
+            ],
+            "accuracy": 0.6622971285892634
+          }
+        ]
+      },
+      "E1": {
+        "n": 3204,
+        "variants": [
+          {
+            "macro_f1": 0.8393580717798728,
+            "ci95": [
+              0.8252693435687658,
+              0.8520035544269088
+            ],
+            "accuracy": 0.8542446941323346
+          }
+        ]
+      },
+      "E2": {
+        "n": 3204,
+        "variants": [
+          {
+            "macro_f1": 0.8745303174902693,
+            "ci95": [
+              0.8628661752926174,
+              0.8861194634600199
+            ],
+            "accuracy": 0.8857677902621723
+          }
+        ]
+      },
+      "E3": {
+        "n": 3204,
+        "variants": [
+          {
+            "macro_f1": 0.8582150788236672,
+            "ci95": [
+              0.8449296076427044,
+              0.871022279716523
+            ],
+            "accuracy": 0.883270911360799
+          },
+          {
+            "macro_f1": 0.8312776969189277,
+            "ci95": [
+              0.8165809708128288,
+              0.8451162830356257
+            ],
+            "accuracy": 0.8467540574282147
+          },
+          {
+            "macro_f1": 0.8596978959546628,
+            "ci95": [
+              0.8459044653596262,
+              0.8726961878065491
+            ],
+            "accuracy": 0.8817103620474407
+          }
+        ],
+        "mean_macro_f1": 0.849730223899086,
+        "std_macro_f1": 0.01599754670648263
+      },
+      "E4": {
+        "n": 3204,
+        "variants": [
+          {
+            "macro_f1": 0.6082020278534885,
+            "ci95": [
+              0.590901893811552,
+              0.6243756251559984
+            ],
+            "accuracy": 0.6791510611735331
+          }
+        ]
+      },
+      "E5": {
+        "n": 3204,
+        "variants": [
+          {
+            "macro_f1": 0.6696927551664719,
+            "ci95": [
+              0.6529221186928437,
+              0.6860586263422302
+            ],
+            "accuracy": 0.7197253433208489
+          }
+        ]
+      }
+    },
+    "external_test": {
+      "E0_rules": {
+        "n": 2100,
+        "variants": [
+          {
+            "macro_f1": 0.5250688306390957,
+            "ci95": [
+              0.5083289474437148,
+              0.5428073396467338
+            ],
+            "accuracy": 0.5285714285714286
+          }
+        ]
+      },
+      "E1": {
+        "n": 2100,
+        "variants": [
+          {
+            "macro_f1": 0.5762099149119175,
+            "ci95": [
+              0.5564135878935291,
+              0.5951910340222532
+            ],
+            "accuracy": 0.530952380952381
+          }
+        ]
+      },
+      "E2": {
+        "n": 2100,
+        "variants": [
+          {
+            "macro_f1": 0.36448598775217184,
+            "ci95": [
+              0.3485867542713501,
+              0.38020397734035777
+            ],
+            "accuracy": 0.33285714285714285
+          }
+        ]
+      },
+      "E3": {
+        "n": 2100,
+        "variants": [
+          {
+            "macro_f1": 0.6083750596293446,
+            "ci95": [
+              0.5872055915148929,
+              0.626024872292453
+            ],
+            "accuracy": 0.5795238095238096
+          },
+          {
+            "macro_f1": 0.619007754540544,
+            "ci95": [
+              0.598052182134306,
+              0.6389969359178127
+            ],
+            "accuracy": 0.5976190476190476
+          },
+          {
+            "macro_f1": 0.6114107188690141,
+            "ci95": [
+              0.5897438398993163,
+              0.6315224366910076
+            ],
+            "accuracy": 0.5785714285714286
+          }
+        ],
+        "mean_macro_f1": 0.6129311776796342,
+        "std_macro_f1": 0.005476987905295751
+      },
+      "E4": {
+        "n": 2100,
+        "variants": [
+          {
+            "macro_f1": 0.6437082729665999,
+            "ci95": [
+              0.6274394510329554,
+              0.6590777793205016
+            ],
+            "accuracy": 0.6438095238095238
+          }
+        ]
+      },
+      "E5": {
+        "n": 2100,
+        "variants": [
+          {
+            "macro_f1": 0.667416124522066,
+            "ci95": [
+              0.6486717717709792,
+              0.6851151899556902
+            ],
+            "accuracy": 0.6419047619047619
+          }
+        ]
+      }
+    }
+  },
+  "pairs": {
+    "test": [
+      {
+        "a": "E2",
+        "b": "E3",
+        "tests": [
+          {
+            "a": "E2",
+            "b": "E3",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 3204,
+            "a_right_b_wrong": 129,
+            "a_wrong_b_right": 121,
+            "p_value": 0.6580555444328551,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.016315238666602117,
+            "diff_ci95": [
+              0.00532041081769567,
+              0.028452022056416636
+            ],
+            "p_holm": 0.9013081167353014
+          },
+          {
+            "a": "E2",
+            "b": "E3",
+            "a_variant": 0,
+            "b_variant": 1,
+            "n": 3204,
+            "a_right_b_wrong": 275,
+            "a_wrong_b_right": 150,
+            "p_value": 1.3807647315338525e-09,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.043252620571341605,
+            "diff_ci95": [
+              0.0301564053858723,
+              0.057055989490591354
+            ],
+            "p_holm": 5.52305892613541e-09
+          },
+          {
+            "a": "E2",
+            "b": "E3",
+            "a_variant": 0,
+            "b_variant": 2,
+            "n": 3204,
+            "a_right_b_wrong": 133,
+            "a_wrong_b_right": 120,
+            "p_value": 0.4506540583676507,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.014832421535606488,
+            "diff_ci95": [
+              0.0032316832823377304,
+              0.027871737777345158
+            ],
+            "p_holm": 0.9013081167353014
+          }
+        ],
+        "significant": false,
+        "better": null,
+        "max_p_holm": 0.9013081167353014
+      },
+      {
+        "a": "E2",
+        "b": "E5",
+        "tests": [
+          {
+            "a": "E2",
+            "b": "E5",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 3204,
+            "a_right_b_wrong": 670,
+            "a_wrong_b_right": 138,
+            "p_value": 1.4284058619251078e-84,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.20483756232379746,
+            "diff_ci95": [
+              0.18792426350271202,
+              0.22320021209245813
+            ],
+            "p_holm": 9.998841033475754e-84
+          }
+        ],
+        "significant": true,
+        "better": "E2",
+        "max_p_holm": 9.998841033475754e-84
+      },
+      {
+        "a": "E3",
+        "b": "E5",
+        "tests": [
+          {
+            "a": "E3",
+            "b": "E5",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 3204,
+            "a_right_b_wrong": 651,
+            "a_wrong_b_right": 127,
+            "p_value": 1.376538340796924e-85,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.18852232365719535,
+            "diff_ci95": [
+              0.17014886433292328,
+              0.2080515780329523
+            ],
+            "p_holm": 1.1012306726375393e-84
+          },
+          {
+            "a": "E3",
+            "b": "E5",
+            "a_variant": 1,
+            "b_variant": 0,
+            "n": 3204,
+            "a_right_b_wrong": 659,
+            "a_wrong_b_right": 252,
+            "p_value": 1.1584499147365243e-42,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.16158494175245586,
+            "diff_ci95": [
+              0.14247774389219434,
+              0.18125809988706912
+            ],
+            "p_holm": 5.792249573682621e-42
+          },
+          {
+            "a": "E3",
+            "b": "E5",
+            "a_variant": 2,
+            "b_variant": 0,
+            "n": 3204,
+            "a_right_b_wrong": 654,
+            "a_wrong_b_right": 135,
+            "p_value": 1.8854137971546742e-82,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": 0.19000514078819097,
+            "diff_ci95": [
+              0.17273993071298985,
+              0.2090659467999125
+            ],
+            "p_holm": 1.1312482782928046e-81
+          }
+        ],
+        "significant": true,
+        "better": "E3",
+        "max_p_holm": 5.792249573682621e-42
+      },
+      {
+        "a": "E4",
+        "b": "E5",
+        "tests": [
+          {
+            "a": "E4",
+            "b": "E5",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 3204,
+            "a_right_b_wrong": 230,
+            "a_wrong_b_right": 360,
+            "p_value": 9.734359516256693e-08,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.06149072731298333,
+            "diff_ci95": [
+              -0.07756387783269286,
+              -0.04612753262972382
+            ],
+            "p_holm": 2.920307854877008e-07
+          }
+        ],
+        "significant": true,
+        "better": "E5",
+        "max_p_holm": 2.920307854877008e-07
+      }
+    ],
+    "external_test": [
+      {
+        "a": "E2",
+        "b": "E3",
+        "tests": [
+          {
+            "a": "E2",
+            "b": "E3",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 2100,
+            "a_right_b_wrong": 242,
+            "a_wrong_b_right": 760,
+            "p_value": 7.436342716549396e-63,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.24388907187717274,
+            "diff_ci95": [
+              -0.2666795547591871,
+              -0.21903759587401697
+            ],
+            "p_holm": 3.718171358274698e-62
+          },
+          {
+            "a": "E2",
+            "b": "E3",
+            "a_variant": 0,
+            "b_variant": 1,
+            "n": 2100,
+            "a_right_b_wrong": 204,
+            "a_wrong_b_right": 760,
+            "p_value": 6.429842211276223e-76,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.2545217667883722,
+            "diff_ci95": [
+              -0.27725036160889865,
+              -0.23024622268127337
+            ],
+            "p_holm": 4.500889547893356e-75
+          },
+          {
+            "a": "E2",
+            "b": "E3",
+            "a_variant": 0,
+            "b_variant": 2,
+            "n": 2100,
+            "a_right_b_wrong": 214,
+            "a_wrong_b_right": 730,
+            "p_value": 1.6194610381904544e-66,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.24692473111684227,
+            "diff_ci95": [
+              -0.27038019162307064,
+              -0.22172960402503783
+            ],
+            "p_holm": 9.716766229142726e-66
+          }
+        ],
+        "significant": true,
+        "better": "E3",
+        "max_p_holm": 3.718171358274698e-62
+      },
+      {
+        "a": "E2",
+        "b": "E5",
+        "tests": [
+          {
+            "a": "E2",
+            "b": "E5",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 2100,
+            "a_right_b_wrong": 102,
+            "a_wrong_b_right": 751,
+            "p_value": 6.702659147569448e-123,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.30293013676989416,
+            "diff_ci95": [
+              -0.3240623126077345,
+              -0.2805814515947708
+            ],
+            "p_holm": 5.362127318055558e-122
+          }
+        ],
+        "significant": true,
+        "better": "E5",
+        "max_p_holm": 5.362127318055558e-122
+      },
+      {
+        "a": "E3",
+        "b": "E5",
+        "tests": [
+          {
+            "a": "E3",
+            "b": "E5",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 2100,
+            "a_right_b_wrong": 319,
+            "a_wrong_b_right": 450,
+            "p_value": 2.6183827481121263e-06,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.05904106489272143,
+            "diff_ci95": [
+              -0.08572278282158353,
+              -0.034028815115884986
+            ],
+            "p_holm": 7.85514824433638e-06
+          },
+          {
+            "a": "E3",
+            "b": "E5",
+            "a_variant": 1,
+            "b_variant": 0,
+            "n": 2100,
+            "a_right_b_wrong": 316,
+            "a_wrong_b_right": 409,
+            "p_value": 0.0006238883858335534,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.04840836998152198,
+            "diff_ci95": [
+              -0.0760833314305971,
+              -0.022402708920352694
+            ],
+            "p_holm": 0.0012477767716671069
+          },
+          {
+            "a": "E3",
+            "b": "E5",
+            "a_variant": 2,
+            "b_variant": 0,
+            "n": 2100,
+            "a_right_b_wrong": 304,
+            "a_wrong_b_right": 437,
+            "p_value": 1.1646306617024489e-06,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.0560054056530519,
+            "diff_ci95": [
+              -0.08314613665970602,
+              -0.030214197377207756
+            ],
+            "p_holm": 4.658522646809795e-06
+          }
+        ],
+        "significant": true,
+        "better": "E5",
+        "max_p_holm": 0.0012477767716671069
+      },
+      {
+        "a": "E4",
+        "b": "E5",
+        "tests": [
+          {
+            "a": "E4",
+            "b": "E5",
+            "a_variant": 0,
+            "b_variant": 0,
+            "n": 2100,
+            "a_right_b_wrong": 263,
+            "a_wrong_b_right": 259,
+            "p_value": 0.8955492443983734,
+            "method": "exact binomial (two-sided) on discordant pairs",
+            "macro_f1_diff": -0.023707851555466064,
+            "diff_ci95": [
+              -0.04206803570029276,
+              -0.004353794231386994
+            ],
+            "p_holm": 0.8955492443983734
+          }
+        ],
+        "significant": false,
+        "better": null,
+        "max_p_holm": 0.8955492443983734
+      }
+    ]
+  },
+  "cost_latency": {
+    "E1": {
+      "cost_usd_per_1000": 0.0,
+      "train_seconds": 7.9,
+      "train_note": "grid search on val, all candidates",
+      "latency": {
+        "device": "cpu",
+        "n": 300,
+        "p50_ms": 1.4035000021976884,
+        "p95_ms": 1.876519994766568,
+        "mean_ms": 1.473783999972511
+      }
+    },
+    "E2": {
+      "cost_usd_per_1000": 0.0,
+      "train_seconds": 631.8,
+      "train_note": "grid search on val, all candidates",
+      "latency": {
+        "device": "cpu",
+        "n": 300,
+        "p50_ms": 4.787300000316463,
+        "p95_ms": 5.713129995638155,
+        "mean_ms": 4.907986999799808
+      }
+    },
+    "E3": {
+      "cost_usd_per_1000": 0.0,
+      "train_seconds": 825.8666666666667,
+      "train_note": "per seed, cpu",
+      "latency": {
+        "device": "cpu",
+        "n": 300,
+        "p50_ms": 10.965650002617622,
+        "p95_ms": 19.356835001599396,
+        "mean_ms": 12.203336666837762
+      },
+      "latency_gpu": {
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n": 300,
+        "p50_ms": 5.241150000074413,
+        "p95_ms": 6.138559999453719,
+        "mean_ms": 5.3280503332644
+      }
+    },
+    "E4": {
+      "cost_usd_per_1000": 0.0,
+      "train_seconds": 0.0,
+      "train_note": "no training",
+      "latency": {
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "p50_ms": 192.55,
+        "p95_ms": 289.1699999999999,
+        "mean_ms": 185.5636123680241
+      }
+    },
+    "E5": {
+      "cost_usd_per_1000": 0.0,
+      "train_seconds": 0.0,
+      "train_note": "no training",
+      "latency": {
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "p50_ms": 189.8,
+        "p95_ms": 290.5699999999999,
+        "mean_ms": 177.46321644042231
+      }
+    }
+  }
+}

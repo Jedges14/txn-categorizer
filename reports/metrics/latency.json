@@ -1,0 +1,41 @@
+{
+  "command": "txncat bench latency",
+  "date": "2026-11-27T00:20:51+00:00",
+  "commit": "6221327",
+  "machine": {
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "sample_rows": 300,
+  "batch_size": 1,
+  "models": {
+    "E1_logreg_tfidf": {
+      "device": "cpu",
+      "n": 300,
+      "p50_ms": 1.4035000021976884,
+      "p95_ms": 1.876519994766568,
+      "mean_ms": 1.473783999972511
+    },
+    "E2_xgb_tfidf_sql": {
+      "device": "cpu",
+      "n": 300,
+      "p50_ms": 4.787300000316463,
+      "p95_ms": 5.713129995638155,
+      "mean_ms": 4.907986999799808
+    },
+    "E3_finetune": {
+      "device": "cpu",
+      "n": 300,
+      "p50_ms": 10.965650002617622,
+      "p95_ms": 19.356835001599396,
+      "mean_ms": 12.203336666837762
+    },
+    "E3_finetune_gpu": {
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "n": 300,
+      "p50_ms": 5.241150000074413,
+      "p95_ms": 6.138559999453719,
+      "mean_ms": 5.3280503332644
+    }
+  }
+}
